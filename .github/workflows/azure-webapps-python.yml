@@ -60,7 +60,7 @@ jobs:
         with:
           name: python-app
           path: |
-            .
+            ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
             !venv/
 
   deploy:
@@ -78,7 +78,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
-          path: .
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
