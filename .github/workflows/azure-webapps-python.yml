@@ -23,6 +23,7 @@ env:
   AZURE_WEBAPP_NAME: openai-cqm-gh-actions  # set this to the name of your Azure Web App
   PYTHON_VERSION: '3.10.0'              # set this to the Python version to use
   AZURE_WEBAPP_PACKAGE_PATH: './app/backend'
+  STARTUP_COMMAND: ''
 on:
   push:
     branches: [ "main" ]
@@ -34,27 +35,26 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-18.04
-
+    environment: dev
     steps:
       - uses: actions/checkout@v3
-
+      #setup Python
       - name: Set up Python version
         uses: actions/setup-python@v3.0.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: 'pip'
-
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-
+      #Install dependencies
       - name: Install dependencies
-        run: pip install -r requirements.txt
-        working-directory: ./app/backend
+        working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        run: |
+          sudo apt install python${{ env.PYTHON_VERSION }}-venv \
+          python -m venv --copies antenv \
+          source antenv/bin/activate \
+          pip install setuptools \
+          pip install -r requirements.txt
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
         with:
@@ -62,9 +62,7 @@ jobs:
           path: |
             ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
             !venv/
-
   deploy:
-
     permissions:
       contents: none
     runs-on: ubuntu-18.04
@@ -87,3 +85,4 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          startup-command: ${{ env.STARTUP_COMMAND }}
