@@ -48,8 +48,8 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
-          python -m venv --copies antenv \
-          source antenv/bin/activate \
+          python3 -m venv venv
+          source venv/bin/activate \
           pip install setuptools \
           pip install -r requirements.txt
 
