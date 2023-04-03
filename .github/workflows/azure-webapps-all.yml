@@ -42,7 +42,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
       - name: Install and build project
         working-directory: ${{ env.AZURE_WEBAPP_FRONT_PATH }}
         run: |
