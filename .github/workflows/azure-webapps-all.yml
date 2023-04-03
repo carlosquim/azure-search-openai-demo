@@ -23,6 +23,7 @@ env:
   AZURE_WEBAPP_NAME: openai-cqm-gh-actions  # set this to the name of your Azure Web App
   PYTHON_VERSION: '3.10.0'              # set this to the Python version to use
   AZURE_WEBAPP_PACKAGE_PATH: './app/backend'
+  AZURE_WEBAPP_FRONT_PATH: './app/frontend'
   STARTUP_COMMAND: ''
 on:
   push:
@@ -38,6 +39,15 @@ jobs:
     environment: dev
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install and build project
+        working-directory: ${{ env.AZURE_WEBAPP_FRONT_PATH }}
+        run: |
+          npm install
+          npm run build
       #setup Python
       - name: Set up Python version
         uses: actions/setup-python@v3.0.0
@@ -59,7 +69,10 @@ jobs:
         with:
           name: python-app
           path: |
+            .
             ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+            ${{ env.AZURE_WEBAPP_FRONT_PATH }}
+            !node_modules/
             !venv/
   deploy:
     permissions:
