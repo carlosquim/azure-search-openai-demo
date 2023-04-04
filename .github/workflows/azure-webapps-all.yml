@@ -44,7 +44,9 @@ jobs:
           python3 -m venv venv
           source venv/bin/activate \
           pip install setuptools \
-          pip install -r requirements.txt
+          pip install -r requirements.txt \
+          mkdir static \
+          mv ${{ env.AZURE_WEBAPP_FRONT_PATH }}/frontend/* ${{ env.AZURE_WEBAPP_FRONT_PATH }}/backend/static/
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       - name: Upload artifact for deployment jobs
@@ -53,7 +55,6 @@ jobs:
           name: python-app
           path: |
             ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-            !node_modules/
             !venv/
   deploy:
     permissions:
@@ -71,7 +72,6 @@ jobs:
           name: python-app
           path: |
             ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/backend
-            ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/frontend
             !venv/
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
