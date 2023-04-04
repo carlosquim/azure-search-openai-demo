@@ -36,7 +36,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    environment: dev
+    environment: Development
     steps:
       - uses: actions/checkout@v3
       - name: Set up Node.js
@@ -69,9 +69,6 @@ jobs:
         with:
           name: python-app
           path: |
-            .
-            ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-            ${{ env.AZURE_WEBAPP_FRONT_PATH }}
             !node_modules/
             !venv/
   deploy:
@@ -88,8 +85,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
-          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
+          path: |
+            ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+            ${{ env.AZURE_WEBAPP_FRONT_PATH }}
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
