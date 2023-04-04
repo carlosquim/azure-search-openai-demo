@@ -69,6 +69,8 @@ jobs:
         with:
           name: python-app
           path: |
+            ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+            ${{ env.AZURE_WEBAPP_FRONT_PATH }}
             !node_modules/
             !venv/
   deploy:
