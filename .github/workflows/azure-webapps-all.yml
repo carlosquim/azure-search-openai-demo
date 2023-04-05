@@ -69,7 +69,6 @@ jobs:
         with:
           name: python-app
           path: |
-            .
             ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
             !node_modules/
             !venv/
